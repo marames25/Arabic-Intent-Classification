@@ -1,0 +1,48 @@
+
+EVALUATION SUMMARY -- Egyptian Arabic Intent Classification (Track C: Few-Shot Prompting)
+================================================================================
+Model:               Qwen/Qwen2.5-7B-Instruct (4-bit)
+
+--- VALIDATION SET (tuned iteratively) ---
+Val size:             90
+Macro F1:             0.934
+Accuracy:             0.933
+
+--- HELD-OUT TEST SET (scored once, no further tuning after seeing this) ---
+Test size:            90
+Macro F1:             0.840
+Accuracy:             0.856
+
+Three worst intents on held-out test (by F1):
+  - transfer_ownership: 0.400
+  - confirm_agree: 0.500
+  - transfer_data_between_lines: 0.500
+
+Note on the val/test gap: val macro F1 reached 0.934 after iterative
+prompt refinement against val errors, but held-out test macro F1 was 0.840
+-- a drop of 0.094. This gap is expected: several rules and
+few-shot examples were added specifically in response to val-set errors, so some
+of the val-set gain reflects fitting to that particular set rather than a fully
+general rule. The held-out test score above is the more honest estimate of
+real-world performance.
+
+Latency (batch=1, CUDA, median of 30 runs after 20 warm-up):
+  2929.4 ms
+
+Constrained-output handling:
+  Fuzzy-match fallback fired on 0.4% of calls (cumulative val+test)
+  Fully unparseable outputs: 0
+
+Overlapping-intent rules applied (see prompt Rules section):
+  1. identify_self vs provide_number         -> full name vs bare digits
+  2. app_navigation_assistance vs system_issue_complaint -> "where/how" vs "broken"
+  3. bill_inquiry vs ask_price                -> already charged vs cost up front
+  4. inquiry_installment vs ask_price/bill_inquiry -> installment topic always wins
+  5. ask_price vs roaming_package             -> flat rate/cost vs plan choice/availability
+  6. package_renewal_inquiry vs roaming_package -> renewal of a roaming package stays roaming_package
+  7. cancel_addon vs package_renewal_inquiry  -> cancel an add-on vs cancel auto-renewal
+  8. update_account_info vs change_credit_limit -> contact/ID info vs credit limit specifically
+  9. add_family_line vs transfer_ownership    -> swapping plan membership vs changing line ownership
+  10. request_info                            -> fallback only, never the default guess
+  11. "خالص" and similar intensifiers carry no polarity -> judged by explicit agree/negate words
+================================================================================

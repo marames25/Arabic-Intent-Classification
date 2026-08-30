@@ -1,0 +1,23 @@
+# Datasets
+data/
+*.jsonl
+*.csv
+
+# Trained models
+intent_model/
+intent_model_final/
+checkpoints/
+checkpoint-*/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Colab / Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env
+.env.*
