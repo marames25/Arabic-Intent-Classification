@@ -2,27 +2,15 @@ TRACK COMPARISON -- Egyptian Arabic Intent Classification
 ================================================================================
                           Track A (AraBERT)        Track C (Qwen2.5-7B few-shot)
 Approach                  Fine-tuned encoder       Few-shot prompting, no training
-Training                  ~7.4 min on CUDA         None
+Training                  ~3.3 min on CUDA         None
 --------------------------------------------------------------------------------
-Val Macro F1              0.849                    0.934
-Val Accuracy              0.856                    0.933
+Val Macro F1              0.929                    0.893
+Val Accuracy              0.933                    0.900
 --------------------------------------------------------------------------------
-Test Macro F1             0.749                    0.840
-Test Accuracy             0.767                    0.856
-Val -> Test drop          0.099                    0.094
+Test Macro F1             0.868                    0.910
+Test Accuracy             0.879                    0.934
+Val -> Test drop          0.061                    -0.017
 --------------------------------------------------------------------------------
-Median latency            179.0 ms (CPU)           2929.4 ms (CUDA)
-Output constraint         Native (27-unit head)    Prompt + validation (0.4% fallback)
-================================================================================
-
-Cross-track finding: two utterances independently defeated BOTH tracks
-despite completely different architectures -- strong evidence these are
-genuinely ambiguous/hard cases in the dataset itself, not a weakness of
-either approach:
-  - "ماشي موافق خالص" (confirm_agree) -> misread as decline_reject in both
-  - "نبعتلك الفاتوره بالايميل بدل الرساله" -> unstable across both tracks
-    (Track A: predicted decline_reject; Track C: flip-flopped between
-    request_agent_action / bill_inquiry / update_account_info across runs).
-    Worth flagging as a dataset labeling-ambiguity item rather than a
-    model failure on either side.
+Median latency            150.2 ms (CPU)           2567.7 ms (CUDA)
+Output constraint         Native (27-unit head)    Prompt + validation (fuzzy-fallback rate varies)
 ================================================================================
